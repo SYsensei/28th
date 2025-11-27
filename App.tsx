@@ -3,7 +3,8 @@ import { AppStage, DogMessage, SecurityLog } from './types';
 import { generateDogBirthdaySpeech } from './services/geminiService';
 import { Typewriter } from './components/Typewriter';
 import { Confetti } from './components/Confetti';
-import { Lock, Fingerprint, PartyPopper, Heart, Bone, ShieldCheck, Terminal, ScanFace, Sparkles, Dog } from 'lucide-react';
+import { SausageDog } from './components/SausageDog';
+import { Lock, Fingerprint, PartyPopper, Heart, Bone, ShieldCheck, Terminal, ScanFace, Sparkles, Dog, PawPrint } from 'lucide-react';
 
 // 指向 public 文件夹下的图片
 // 必须确保你把照片重命名为 birthday-dog.jpg 并放在 public 文件夹内
@@ -83,7 +84,25 @@ const App: React.FC = () => {
   return (
     <div className={`min-h-screen transition-colors duration-1000 overflow-hidden flex items-center justify-center relative ${stage === AppStage.REVEAL ? 'bg-[#FFF5F7]' : 'bg-neutral-900'}`}>
       
-      {/* Background Elements (Dark Mode) */}
+      {/* Dynamic Paw Print Background Pattern */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none overflow-hidden">
+         {Array.from({ length: 12 }).map((_, i) => (
+            <div 
+                key={i} 
+                className="absolute text-current"
+                style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    transform: `rotate(${Math.random() * 360}deg)`,
+                    color: stage === AppStage.REVEAL ? '#ec4899' : '#10b981'
+                }}
+            >
+                <PawPrint size={32} />
+            </div>
+         ))}
+      </div>
+
+      {/* Background Tech Elements (Dark Mode) */}
       {stage !== AppStage.REVEAL && (
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-10 left-10 text-emerald-500"><ScanFace size={64} /></div>
@@ -96,12 +115,18 @@ const App: React.FC = () => {
         
         {/* STAGE 1: LOCKED (The Gatekeeper) */}
         {stage === AppStage.LOCKED && (
-          <div className="text-center space-y-8 animate-fade-in">
-            <div className="bg-neutral-800/90 backdrop-blur-md p-8 rounded-3xl border border-neutral-700 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-              <div className="flex justify-center mb-6">
+          <div className="text-center space-y-8 animate-fade-in relative">
+            <div className="bg-neutral-800/90 backdrop-blur-md p-8 rounded-3xl border border-neutral-700 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden">
+              
+              {/* Dog Peek Animation */}
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-20 animate-wiggle z-20">
+                 <SausageDog />
+              </div>
+
+              <div className="flex justify-center mb-6 mt-4">
                 <div className="relative">
                     <div className="w-28 h-28 bg-red-900/40 rounded-full flex items-center justify-center animate-pulse shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-                      <Dog size={48} className="text-red-500" />
+                      <Fingerprint size={48} className="text-red-500" />
                     </div>
                     <div className="absolute -bottom-3 -right-3 bg-neutral-900 border border-neutral-700 p-2 rounded-full">
                         <Lock size={18} className="text-neutral-400" />
@@ -119,16 +144,16 @@ const App: React.FC = () => {
 
               <button 
                 onClick={startVerification}
-                className="group relative w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-5 px-6 rounded-2xl transition-all transform hover:scale-105 active:scale-95 shadow-lg overflow-hidden border-b-4 border-emerald-800 hover:border-emerald-700"
+                className="group relative w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-5 px-6 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-lg overflow-hidden border-b-4 border-emerald-800 hover:border-emerald-700"
               >
                 <span className="relative z-10 flex items-center justify-center gap-3 font-mono-custom text-xl tracking-wider">
-                   <Fingerprint className="animate-wiggle" /> 验证身份
+                   <PawPrint className="animate-pulse" size={20} /> 点击开始验证
                 </span>
-                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               </button>
             </div>
             
-            <div className="text-neutral-600 text-xs font-mono-custom uppercase">
+            <div className="text-neutral-600 text-xs font-mono-custom uppercase flex items-center justify-center gap-2">
+              <SausageDog className="w-12 h-6 opacity-50" />
               安全连接由“腊肠特工处”提供支持
             </div>
           </div>
@@ -143,9 +168,12 @@ const App: React.FC = () => {
             <div className="flex items-center justify-between border-b border-neutral-700 pb-4 mb-6">
               <div className="flex items-center gap-2">
                 <Terminal size={18} className="text-emerald-500" />
-                <span className="text-emerald-500 text-sm tracking-widest">身份核验中...</span>
+                <span className="text-emerald-500 text-sm tracking-widest">抚摸验证中...</span>
               </div>
-              <span className="text-emerald-500 font-mono-custom">{petProgress}%</span>
+              <div className="flex items-center gap-1">
+                 <Bone size={14} className="text-emerald-500" />
+                 <span className="text-emerald-500 font-mono-custom">{petProgress}%</span>
+              </div>
             </div>
 
             {/* Interactive Area */}
@@ -155,15 +183,28 @@ const App: React.FC = () => {
                         onClick={handlePet}
                         className="w-full h-full rounded-full bg-neutral-900 border-4 border-dashed border-emerald-500/30 flex flex-col items-center justify-center hover:bg-neutral-900/80 active:scale-95 transition-all cursor-pointer relative overflow-hidden group"
                     >
+                        {/* Progress Background - Growing Sausage Dog Color */}
                         <div 
-                           className="absolute bottom-0 left-0 w-full bg-emerald-900/40 transition-all duration-300 ease-out"
+                           className="absolute bottom-0 left-0 w-full bg-[#8B4513] transition-all duration-300 ease-out opacity-20"
                            style={{ height: `${petProgress}%` }}
                         />
-                        <div className="relative z-10 text-center pointer-events-none">
-                            <Fingerprint size={64} className={`text-emerald-500 mx-auto mb-2 ${petProgress < 100 ? 'animate-pulse' : ''}`} />
-                            <span className="text-emerald-400 text-sm font-bold tracking-wider">
-                                {petProgress < 100 ? "快速点击抚摸屏幕" : "验证成功！"}
-                            </span>
+                        
+                        <div className="relative z-10 text-center pointer-events-none flex flex-col items-center">
+                            {petProgress < 100 ? (
+                                <>
+                                    <div className="animate-bounce mb-2">
+                                        <SausageDog className="w-24 h-12" />
+                                    </div>
+                                    <span className="text-emerald-400 text-sm font-bold tracking-wider mt-2">
+                                        快速抚摸屏幕！
+                                    </span>
+                                </>
+                            ) : (
+                                <div className="text-emerald-400 flex flex-col items-center">
+                                    <Heart size={48} className="animate-pulse text-red-500 fill-red-500" />
+                                    <span className="mt-2 font-bold">验证成功！</span>
+                                </div>
+                            )}
                         </div>
 
                         {/* Floating Text Effects */}
@@ -179,7 +220,7 @@ const App: React.FC = () => {
                     </button>
                 </div>
 
-                <div className="w-full space-y-2 h-24 overflow-hidden">
+                <div className="w-full space-y-2 h-24 overflow-hidden" ref={logContainerRef}>
                     {logs.map((log) => (
                         <div key={log.id} className="flex items-center gap-2 text-xs sm:text-sm animate-in slide-in-from-left">
                             <span className="text-emerald-600">➜</span>
@@ -218,8 +259,8 @@ const App: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-90" />
                 
                 <div className="absolute bottom-6 left-6 text-white w-full pr-12">
-                  <div className="inline-block bg-pink-500 text-white text-[10px] font-bold px-2 py-1 rounded-full mb-2 uppercase tracking-wide">
-                    验证通过
+                  <div className="inline-block bg-pink-500 text-white text-[10px] font-bold px-2 py-1 rounded-full mb-2 uppercase tracking-wide flex items-center gap-1 w-fit">
+                    <ShieldCheck size={12} /> 验证通过
                   </div>
                   <h2 className="text-3xl font-hand font-bold leading-none drop-shadow-md">
                     28岁生日快乐<br/>妈妈！
@@ -234,19 +275,29 @@ const App: React.FC = () => {
               </div>
 
               {/* Message Area */}
-              <div className="p-8 space-y-6 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
+              <div className="p-8 space-y-6 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed relative">
+                
+                {/* Decoration: Sausage Dog Footer */}
+                <div className="absolute bottom-2 right-4 opacity-20 pointer-events-none">
+                    <SausageDog className="w-24 h-12" />
+                </div>
+
                 {message ? (
                   <>
                     <div className="text-center">
                         <h3 className="font-serif text-xl font-bold text-neutral-800 leading-tight mb-3">
                         {message.headline}
                         </h3>
-                        <div className="mx-auto w-12 h-1 bg-pink-400 rounded-full" />
+                        <div className="mx-auto flex items-center justify-center gap-2 text-pink-300">
+                            <Bone size={12} fill="currentColor" />
+                            <div className="w-12 h-1 bg-pink-400 rounded-full" />
+                            <Bone size={12} fill="currentColor" />
+                        </div>
                     </div>
 
                     <div className="relative px-2">
                         <Sparkles className="absolute -top-6 -left-2 text-yellow-400 w-6 h-6 animate-pulse" />
-                        <p className="text-neutral-600 font-hand text-lg leading-relaxed text-justify">
+                        <p className="text-neutral-600 font-hand text-lg leading-relaxed text-justify relative z-10">
                         {message.body}
                         </p>
                         <Heart className="absolute -bottom-6 -right-2 text-pink-400 w-5 h-5 animate-bounce" />
@@ -255,7 +306,7 @@ const App: React.FC = () => {
                     <div className="pt-6 mt-4 flex items-center justify-center border-t border-dashed border-neutral-200">
                       <div className="flex flex-col items-center gap-1 text-center">
                         <div className="bg-pink-50 p-3 rounded-full mb-1">
-                            <Bone size={20} className="fill-pink-400 text-pink-400 animate-wiggle" />
+                            <SausageDog className="w-16 h-8" />
                         </div>
                         <span className="font-mono-custom text-[10px] text-neutral-400 uppercase tracking-widest">签署人</span>
                         <span className="font-hand font-bold text-lg text-neutral-800">{message.signature}</span>
