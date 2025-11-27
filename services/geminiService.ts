@@ -1,7 +1,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 export const generateDogBirthdaySpeech = async (): Promise<{ headline: string, body: string, signature: string }> => {
-  if (!process.env.API_KEY) {
+  // Support both standard process.env (local/node) and import.meta.env (Vite/production)
+  // Note: For Vite, your .env file should use keys starting with VITE_ like VITE_API_KEY
+  const apiKey = process.env.API_KEY || (import.meta as any).env?.VITE_API_KEY;
+
+  if (!apiKey) {
     // Fallback if no API key is present (Chinese)
     return {
       headline: "任务报告：铲屎官已升级至 Level 28",
@@ -10,7 +14,7 @@ export const generateDogBirthdaySpeech = async (): Promise<{ headline: string, b
     };
   }
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: apiKey });
   
   const systemInstruction = `
     你是一只**长毛腊肠犬**，正在给你的主人（你叫她“妈妈”）写28岁的生日贺卡。

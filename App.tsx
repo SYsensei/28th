@@ -5,9 +5,9 @@ import { Typewriter } from './components/Typewriter';
 import { Confetti } from './components/Confetti';
 import { Lock, Fingerprint, PartyPopper, Heart, Bone, ShieldCheck, Terminal, ScanFace, Sparkles, Dog } from 'lucide-react';
 
-// A more reliable Dachshund image source, or a fallback generic cute dog if specific ID fails
-// Using a specific long-haired dachshund image if possible
-const DOG_IMAGE_URL = "https://images.unsplash.com/photo-1625316708582-7c38734c3121?q=80&w=1000&auto=format&fit=crop";
+// 指向 public 文件夹下的图片
+// 必须确保你把照片重命名为 birthday-dog.jpg 并放在 public 文件夹内
+const DOG_IMAGE_URL = "/birthday-dog.jpg";
 
 const App: React.FC = () => {
   const [stage, setStage] = useState<AppStage>(AppStage.LOCKED);
@@ -211,6 +211,7 @@ const App: React.FC = () => {
                     <div className="w-full h-full flex flex-col items-center justify-center bg-pink-50 text-pink-300">
                         <Dog size={80} />
                         <span className="text-sm mt-2 font-hand">（假装这里是你的可爱修勾）</span>
+                        <span className="text-xs mt-1 text-pink-200">请确保 birthday-dog.jpg 在 public 文件夹中</span>
                     </div>
                  )}
                 
